@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KASNEB Visitor Management - Login</title>
+    <style>
+        body {
+            background: #eaf4fb;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+        }
+        .top-bar {
+            background: #e94b4b;
+            color: #fff;
+            padding: 8px 0;
+            text-align: right;
+            font-size: 14px;
+        }
+        .logo-bar {
+            background: #fff;
+            padding: 24px 0 10px 0;
+            text-align: center;
+            border-bottom: 2px solid #0072bb;
+        }
+        .logo-bar img {
+            width: 90px;
+        }
+        .login-container {
+            background: #f6fbff;
+            max-width: 400px;
+            margin: 40px auto;
+            padding: 40px 30px 30px 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 25px;
+            color: #0072bb;
+            font-weight: 500;
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px 10px;
+            margin: 10px 0;
+            border: 1px solid #b3d1e7;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .login-btn {
+            width: 100%;
+            background: #0072bb;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            font-size: 17px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .login-btn:hover {
+            background: #e94b4b;
+        }
+        .error {
+            color: #d8000c;
+            background: #ffd2d2;
+            border: 1px solid #d8000c;
+            border-radius: 4px;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        Call Us: +254 (020)4923000 &nbsp; | &nbsp; Email: info@kasneb.or.ke
+    </div>
+    <div class="logo-bar">
+        <img src="{% static 'kasneb.jpg' %}" alt="KASNEB Logo">
+    </div>
+    <div class="login-container">
+        <h2>Login to your Account</h2>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="username" class="form-input" placeholder="Username" required>
+            <input type="password" name="password" class="form-input" placeholder="Password" required>
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+    </div>
+</body>
+</html> 

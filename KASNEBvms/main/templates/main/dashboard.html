@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KASNEB Dashboard</title>
+    <style>
+        body {
+            background: #eaf4fb;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .dashboard-container {
+            background: #f6fbff;
+            max-width: 500px;
+            margin: 60px auto;
+            padding: 40px 30px 30px 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            text-align: center;
+        }
+        .logo {
+            width: 90px;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #0072bb;
+            font-weight: 500;
+        }
+        .welcome {
+            font-size: 22px;
+            margin: 20px 0 10px 0;
+            color: #222;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <img src="{% static 'kasneb.jpg' %}" alt="KASNEB Logo" class="logo">
+        <h2>KASNEB Visitor Management System</h2>
+        <div class="welcome">
+            Hello, {{ request.user.first_name }} {{ request.user.last_name }}!
+        </div>
+        <p>Welcome to your dashboard.</p>
+        <form action="{% url 'logout' %}" method="post" style="margin-top: 20px;">
+            {% csrf_token %}
+            <button type="submit" style="background:#0072bb;color:#fff;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;">Logout</button>
+        </form>
+    </div>
+</body>
+</html> 
