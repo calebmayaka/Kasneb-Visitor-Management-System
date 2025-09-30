@@ -1,0 +1,272 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Visitors - KASNEB</title>
+    <style>
+        body {
+            background: #eaf4fb;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            background: #fff;
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            width: 60px;
+        }
+        .nav-btn {
+            background: #6c757d;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .nav-btn:hover {
+            background: #5a6268;
+        }
+        .filters {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .filter-group label {
+            font-weight: 500;
+            color: #333;
+        }
+        .filter-group input, .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .btn-filter {
+            background: #0072bb;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-filter:hover {
+            background: #e94b4b;
+        }
+        .visitors-container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            overflow: hidden;
+        }
+        .visitors-header {
+            background: #0072bb;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .visitor-card {
+            border-bottom: 1px solid #eee;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 20px;
+            align-items: center;
+        }
+        .visitor-card:last-child {
+            border-bottom: none;
+        }
+        .visitor-card:hover {
+            background: #f8f9fa;
+        }
+        .visitor-info h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+        .visitor-info p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .visit-details p {
+            margin: 0 0 3px 0;
+            font-size: 14px;
+        }
+        .visit-details strong {
+            color: #333;
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+        }
+        .status-checked-in {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-checked-out {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .action-btn {
+            background: #28a745;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 12px;
+            text-align: center;
+        }
+        .action-btn:hover {
+            background: #218838;
+        }
+        .action-btn.disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .no-visitors {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        @media (max-width: 768px) {
+            .visitor-card {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-group {
+                justify-content: space-between;
+            }
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="{% static 'kasneb.jpg' %}" alt="KASNEB Logo" class="logo">
+            <div>
+                <h2 style="margin: 0; color: #0072bb;">All Visitors</h2>
+                <p style="margin: 0; color: #666;">Complete visitor records</p>
+            </div>
+        </div>
+        <div>
+            <a href="{% url 'dashboard' %}" class="nav-btn">← Back to Dashboard</a>
+        </div>
+    </div>
+
+    <div class="filters">
+        <form method="get" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap; width: 100%;">
+            <div class="filter-group">
+                <label for="search">Search:</label>
+                <input type="text" id="search" name="search" value="{{ request.GET.search }}" placeholder="Name, phone, ID, host...">
+            </div>
+            <div class="filter-group">
+                <label for="status">Status:</label>
+                <select id="status" name="status">
+                    <option value="">All Statuses</option>
+                    <option value="checked_in" {% if request.GET.status == 'checked_in' %}selected{% endif %}>Checked In</option>
+                    <option value="checked_out" {% if request.GET.status == 'checked_out' %}selected{% endif %}>Checked Out</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-filter">Filter</button>
+            <a href="{% url 'visitor_list' %}" class="btn-filter" style="background: #6c757d; text-decoration: none;">Clear</a>
+        </form>
+    </div>
+
+    <div class="visitors-container">
+        <div class="visitors-header">
+            <h3 style="margin: 0;">Visitor Records</h3>
+            <span>{{ visitors|length }} visitor{{ visitors|length|pluralize }}</span>
+        </div>
+
+        {% for visitor in visitors %}
+        <div class="visitor-card">
+            <div class="visitor-info">
+                <h4>{{ visitor.full_name }}</h4>
+                <p><strong>Phone:</strong> {{ visitor.phone_number }}</p>
+                <p><strong>ID:</strong> {{ visitor.id_number }}</p>
+                {% if visitor.company_organization %}
+                    <p><strong>Company:</strong> {{ visitor.company_organization }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="visit-details">
+                <p><strong>Host:</strong> {{ visitor.host_name }}</p>
+                <p><strong>Department:</strong> {{ visitor.host_department }}</p>
+                <p><strong>Purpose:</strong> {{ visitor.get_visit_purpose_display }}</p>
+                <p><strong>Check-in:</strong> {{ visitor.check_in_time|date:"M d, Y H:i" }}</p>
+                {% if visitor.check_out_time %}
+                    <p><strong>Check-out:</strong> {{ visitor.check_out_time|date:"M d, Y H:i" }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="visit-details">
+                <p><strong>Badge:</strong> {{ visitor.visitor_badge_number|default:"Not assigned" }}</p>
+                <p><strong>Duration:</strong> 
+                    {% if visitor.check_out_time %}
+                        {{ visitor.visit_duration }}
+                    {% else %}
+                        {{ visitor.visit_duration }} (ongoing)
+                    {% endif %}
+                </p>
+                {% if visitor.items_carried %}
+                    <p><strong>Items:</strong> {{ visitor.items_carried|truncatechars:50 }}</p>
+                {% endif %}
+            </div>
+            
+            <div style="text-align: center;">
+                <div class="status-badge status-{{ visitor.status|cut:'_' }}">
+                    {{ visitor.get_status_display }}
+                </div>
+                <div style="margin-top: 10px;">
+                    {% if visitor.status == 'checked_in' %}
+                        <a href="{% url 'visitor_checkout' visitor.id %}" class="action-btn">Check Out</a>
+                    {% else %}
+                        <span class="action-btn disabled">Checked Out</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-visitors">
+            <h3>No visitors found</h3>
+            <p>No visitors match your current filters.</p>
+            <a href="{% url 'visitor_registration' %}" class="btn-filter">Register New Visitor</a>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,285 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Vehicles - KASNEB</title>
+    <style>
+        body {
+            background: #eaf4fb;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            background: #fff;
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            width: 60px;
+        }
+        .nav-btn {
+            background: #6c757d;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .nav-btn:hover {
+            background: #5a6268;
+        }
+        .filters {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .filter-group label {
+            font-weight: 500;
+            color: #333;
+        }
+        .filter-group input, .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .btn-filter {
+            background: #0072bb;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-filter:hover {
+            background: #e94b4b;
+        }
+        .vehicles-container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            overflow: hidden;
+        }
+        .vehicles-header {
+            background: #0072bb;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .vehicle-card {
+            border-bottom: 1px solid #eee;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 20px;
+            align-items: center;
+        }
+        .vehicle-card:last-child {
+            border-bottom: none;
+        }
+        .vehicle-card:hover {
+            background: #f8f9fa;
+        }
+        .vehicle-info h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+        .vehicle-info p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .driver-details p {
+            margin: 0 0 3px 0;
+            font-size: 14px;
+        }
+        .driver-details strong {
+            color: #333;
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+        }
+        .status-parked {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        .status-departed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .action-btn {
+            background: #28a745;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 12px;
+            text-align: center;
+        }
+        .action-btn:hover {
+            background: #218838;
+        }
+        .action-btn.disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .no-vehicles {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .visitor-link {
+            background: #e7f3ff;
+            color: #0066cc;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            text-decoration: none;
+        }
+        @media (max-width: 768px) {
+            .vehicle-card {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-group {
+                justify-content: space-between;
+            }
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="{% static 'kasneb.jpg' %}" alt="KASNEB Logo" class="logo">
+            <div>
+                <h2 style="margin: 0; color: #0072bb;">All Vehicles</h2>
+                <p style="margin: 0; color: #666;">Complete vehicle records</p>
+            </div>
+        </div>
+        <div>
+            <a href="{% url 'dashboard' %}" class="nav-btn">← Back to Dashboard</a>
+        </div>
+    </div>
+
+    <div class="filters">
+        <form method="get" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap; width: 100%;">
+            <div class="filter-group">
+                <label for="search">Search:</label>
+                <input type="text" id="search" name="search" value="{{ request.GET.search }}" placeholder="License plate, driver, model...">
+            </div>
+            <div class="filter-group">
+                <label for="status">Status:</label>
+                <select id="status" name="status">
+                    <option value="">All Statuses</option>
+                    <option value="parked" {% if request.GET.status == 'parked' %}selected{% endif %}>Parked</option>
+                    <option value="departed" {% if request.GET.status == 'departed' %}selected{% endif %}>Departed</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-filter">Filter</button>
+            <a href="{% url 'vehicle_list' %}" class="btn-filter" style="background: #6c757d; text-decoration: none;">Clear</a>
+        </form>
+    </div>
+
+    <div class="vehicles-container">
+        <div class="vehicles-header">
+            <h3 style="margin: 0;">Vehicle Records</h3>
+            <span>{{ vehicles|length }} vehicle{{ vehicles|length|pluralize }}</span>
+        </div>
+
+        {% for vehicle in vehicles %}
+        <div class="vehicle-card">
+            <div class="vehicle-info">
+                <h4>{{ vehicle.license_plate }}</h4>
+                <p><strong>Type:</strong> {{ vehicle.get_vehicle_type_display }}</p>
+                {% if vehicle.make_model %}
+                    <p><strong>Model:</strong> {{ vehicle.make_model }}</p>
+                {% endif %}
+                {% if vehicle.color %}
+                    <p><strong>Color:</strong> {{ vehicle.color }}</p>
+                {% endif %}
+                {% if vehicle.visitor %}
+                    <p><span class="visitor-link">Linked to {{ vehicle.visitor.full_name }}</span></p>
+                {% endif %}
+            </div>
+            
+            <div class="driver-details">
+                <p><strong>Driver:</strong> {{ vehicle.driver_name }}</p>
+                <p><strong>Phone:</strong> {{ vehicle.driver_phone }}</p>
+                <p><strong>ID:</strong> {{ vehicle.driver_id_number }}</p>
+                <p><strong>Purpose:</strong> {{ vehicle.purpose|truncatechars:30 }}</p>
+            </div>
+            
+            <div class="driver-details">
+                <p><strong>Entry:</strong> {{ vehicle.entry_time|date:"M d, Y H:i" }}</p>
+                {% if vehicle.exit_time %}
+                    <p><strong>Exit:</strong> {{ vehicle.exit_time|date:"M d, Y H:i" }}</p>
+                {% endif %}
+                <p><strong>Duration:</strong> 
+                    {% if vehicle.exit_time %}
+                        {{ vehicle.parking_duration }}
+                    {% else %}
+                        {{ vehicle.parking_duration }} (ongoing)
+                    {% endif %}
+                </p>
+                {% if vehicle.parking_spot %}
+                    <p><strong>Spot:</strong> {{ vehicle.parking_spot }}</p>
+                {% endif %}
+            </div>
+            
+            <div style="text-align: center;">
+                <div class="status-badge status-{{ vehicle.status }}">
+                    {{ vehicle.get_status_display }}
+                </div>
+                <div style="margin-top: 10px;">
+                    {% if vehicle.status == 'parked' %}
+                        <a href="{% url 'vehicle_departure' vehicle.id %}" class="action-btn">Mark Departed</a>
+                    {% else %}
+                        <span class="action-btn disabled">Departed</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-vehicles">
+            <h3>No vehicles found</h3>
+            <p>No vehicles match your current filters.</p>
+            <a href="{% url 'vehicle_registration' %}" class="btn-filter">Register New Vehicle</a>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

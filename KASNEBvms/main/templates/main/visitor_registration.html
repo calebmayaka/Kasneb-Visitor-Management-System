@@ -1,0 +1,249 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visitor Registration - KASNEB</title>
+    <style>
+        body {
+            background: #eaf4fb;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            background: #fff;
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            width: 60px;
+        }
+        .form-container {
+            background: #fff;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+        .required {
+            color: #e94b4b;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #0072bb;
+            box-shadow: 0 0 5px rgba(0,114,187,0.3);
+        }
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+        .btn {
+            background: #0072bb;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #e94b4b;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            margin-right: 10px;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        .nav-btn {
+            background: #6c757d;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .nav-btn:hover {
+            background: #5a6268;
+        }
+        .messages {
+            margin-bottom: 20px;
+        }
+        .message {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="{% static 'kasneb.jpg' %}" alt="KASNEB Logo" class="logo">
+            <div>
+                <h2 style="margin: 0; color: #0072bb;">Visitor Registration</h2>
+                <p style="margin: 0; color: #666;">KASNEB Security Gate</p>
+            </div>
+        </div>
+        <div>
+            <a href="{% url 'dashboard' %}" class="nav-btn">← Back to Dashboard</a>
+        </div>
+    </div>
+
+    <div class="form-container">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="first_name">First Name <span class="required">*</span></label>
+                    <input type="text" id="first_name" name="first_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name <span class="required">*</span></label>
+                    <input type="text" id="last_name" name="last_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone_number">Phone Number <span class="required">*</span></label>
+                    <input type="tel" id="phone_number" name="phone_number" placeholder="e.g., +254712345678" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="visitor@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="id_number">ID/Passport Number <span class="required">*</span></label>
+                    <input type="text" id="id_number" name="id_number" required>
+                </div>
+                <div class="form-group">
+                    <label for="company_organization">Company/Organization</label>
+                    <input type="text" id="company_organization" name="company_organization" placeholder="Optional">
+                </div>
+                <div class="form-group">
+                    <label for="host_name">Host Name <span class="required">*</span></label>
+                    <input type="text" id="host_name" name="host_name" placeholder="Person being visited" required>
+                </div>
+                <div class="form-group">
+                    <label for="host_department">Host Department <span class="required">*</span></label>
+                    <input type="text" id="host_department" name="host_department" placeholder="e.g., Finance, HR, IT" required>
+                </div>
+                <div class="form-group">
+                    <label for="visit_purpose">Visit Purpose <span class="required">*</span></label>
+                    <select id="visit_purpose" name="visit_purpose" required>
+                        <option value="">Select purpose...</option>
+                        <option value="meeting">Meeting</option>
+                        <option value="interview">Interview</option>
+                        <option value="delivery">Delivery</option>
+                        <option value="maintenance">Maintenance</option>
+                        <option value="consultation">Consultation</option>
+                        <option value="training">Training</option>
+                        <option value="examination">Examination</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="visitor_badge_number">Visitor Badge Number</label>
+                    <input type="text" id="visitor_badge_number" name="visitor_badge_number" placeholder="e.g., V001">
+                </div>
+                <div class="form-group full-width">
+                    <label for="visit_purpose_details">Visit Purpose Details</label>
+                    <textarea id="visit_purpose_details" name="visit_purpose_details" placeholder="Additional details about the visit..."></textarea>
+                </div>
+                <div class="form-group full-width">
+                    <label for="items_carried">Items Carried</label>
+                    <textarea id="items_carried" name="items_carried" placeholder="List any bags, laptops, or other items..."></textarea>
+                </div>
+                <div class="form-group full-width">
+                    <label for="special_requirements">Special Requirements</label>
+                    <textarea id="special_requirements" name="special_requirements" placeholder="Any special requirements or notes..."></textarea>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn">Register Visitor</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Auto-format phone number
+        document.getElementById('phone_number').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.startsWith('254')) {
+                value = '+' + value;
+            } else if (value.startsWith('0')) {
+                value = '+254' + value.substring(1);
+            }
+            e.target.value = value;
+        });
+
+        // Auto-uppercase ID number
+        document.getElementById('id_number').addEventListener('input', function(e) {
+            e.target.value = e.target.value.toUpperCase();
+        });
+    </script>
+</body>
+</html>
