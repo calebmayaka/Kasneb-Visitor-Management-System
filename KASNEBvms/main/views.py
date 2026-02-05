@@ -68,6 +68,14 @@ def admin_setup(request):
                 'Run migrations (python manage.py migrate) and try again.'
             )
             return render(request, 'main/admin_setup.html')
+        KasnebUser.objects.create_superuser(
+            username=username,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            phone_number=phone_number,
+            password=password,
+        )
         messages.success(request, 'Admin account created. You can now log in.')
         return redirect('login')
 
