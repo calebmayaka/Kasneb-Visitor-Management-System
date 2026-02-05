@@ -24,14 +24,25 @@ class KasnebUserManager(BaseUserManager):
     def create_superuser(self, username, email, first_name, last_name, phone_number, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('role', KasnebUser.ROLE_ADMIN)
         return self.create_user(username, email, first_name, last_name, phone_number, password, **extra_fields)
 
 class KasnebUser(AbstractBaseUser, PermissionsMixin):
+    ROLE_SECURITY = 'security'
+    ROLE_ICT_OFFICER = 'ict_officer'
+    ROLE_ADMIN = 'admin'
+    ROLE_CHOICES = [
+        (ROLE_SECURITY, 'Security'),
+        (ROLE_ICT_OFFICER, 'ICT Officer'),
+        (ROLE_ADMIN, 'Admin'),
+    ]
+
     username = models.CharField(max_length=150, unique=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=20)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=ROLE_SECURITY)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
