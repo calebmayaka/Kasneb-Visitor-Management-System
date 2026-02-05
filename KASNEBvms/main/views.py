@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.core.exceptions import PermissionDenied
 from django.conf import settings
 from django.db.models import Count, Q
+from django.db.utils import OperationalError
 from django.utils import timezone
 from datetime import datetime, timedelta
 from functools import wraps
@@ -51,6 +52,22 @@ def admin_setup(request):
             messages.error(request, 'Email is already in use.')
             return render(request, 'main/admin_setup.html')
 
+        try:
+            KasnebUser.objects.create_superuser(
+                username=username,
+                email=email,
+                first_name=first_name,
+                last_name=last_name,
+                phone_number=phone_number,
+                password=password,
+            )
+        except OperationalError:
+            messages.error(
+                request,
+                'Database schema is missing required fields. '
+                'Run migrations (python manage.py migrate) and try again.'
+            )
+            return render(request, 'main/admin_setup.html')
         KasnebUser.objects.create_superuser(
             username=username,
             email=email,
