@@ -1,0 +1,161 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Setup - KASNEB</title>
+    <style>
+        body {
+            background: #eaf4fb;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+        }
+        .top-bar {
+            background: #e94b4b;
+            color: #fff;
+            padding: 8px 0;
+            text-align: right;
+            font-size: 14px;
+        }
+        .logo-bar {
+            background: #fff;
+            padding: 24px 0 10px 0;
+            text-align: center;
+            border-bottom: 2px solid #0072bb;
+        }
+        .logo-bar img {
+            width: 90px;
+        }
+        .setup-container {
+            background: #fff;
+            max-width: 520px;
+            margin: 40px auto;
+            padding: 32px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        }
+        h2 {
+            margin-top: 0;
+            color: #0072bb;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .form-grid .full {
+            grid-column: 1 / -1;
+        }
+        label {
+            font-weight: 600;
+            font-size: 13px;
+            color: #333;
+            display: block;
+            margin-bottom: 6px;
+        }
+        input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #b3d1e7;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+        .submit-btn {
+            background: #0072bb;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .submit-btn:hover {
+            background: #005b95;
+        }
+        .error {
+            color: #d8000c;
+            background: #ffd2d2;
+            border: 1px solid #d8000c;
+            border-radius: 4px;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 18px;
+            color: #0072bb;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        Call Us: +254 (020)4923000 &nbsp; | &nbsp; Email: info@kasneb.or.ke
+    </div>
+    <div class="logo-bar">
+        <img src="{% static 'kasneb.jpg' %}" alt="KASNEB Logo">
+    </div>
+    <div class="setup-container">
+        <h2>Development Admin Setup</h2>
+        <div class="warning">
+            This page is intended for development use only. It will be blocked when DEBUG is disabled.
+        </div>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div>
+                    <label for="first_name">First name</label>
+                    <input id="first_name" type="text" name="first_name" required>
+                </div>
+                <div>
+                    <label for="last_name">Last name</label>
+                    <input id="last_name" type="text" name="last_name" required>
+                </div>
+                <div class="full">
+                    <label for="username">Username</label>
+                    <input id="username" type="text" name="username" required>
+                </div>
+                <div class="full">
+                    <label for="email">Email</label>
+                    <input id="email" type="email" name="email" required>
+                </div>
+                <div class="full">
+                    <label for="phone_number">Phone number</label>
+                    <input id="phone_number" type="text" name="phone_number" required>
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input id="password" type="password" name="password" required>
+                </div>
+                <div>
+                    <label for="password_confirm">Confirm password</label>
+                    <input id="password_confirm" type="password" name="password_confirm" required>
+                </div>
+            </div>
+            <button type="submit" class="submit-btn">Create admin account</button>
+        </form>
+        <a class="back-link" href="{% url 'login' %}">Back to login</a>
+    </div>
+</body>
+</html>

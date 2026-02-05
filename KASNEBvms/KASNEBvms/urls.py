@@ -23,6 +23,7 @@ urlpatterns = [
     path('', lambda request: redirect('login'), name='root'),
     path('admin/', admin.site.urls),
     path('login/', main_views.login_view, name='login'),
+    path('setup/admin/', main_views.admin_setup, name='admin_setup'),
     path('dashboard/', main_views.dashboard_view, name='dashboard'),
     path('logout/', main_views.logout_view, name='logout'),
     

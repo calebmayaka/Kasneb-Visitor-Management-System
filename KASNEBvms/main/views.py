@@ -4,10 +4,13 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.http import JsonResponse
+from django.core.exceptions import PermissionDenied
+from django.conf import settings
 from django.db.models import Count, Q
 from django.utils import timezone
 from datetime import datetime, timedelta
-from .models import Visitor, Vehicle
+from functools import wraps
+from .models import KasnebUser, Visitor, Vehicle
 
 # Create your views here.
 
@@ -23,7 +26,57 @@ def login_view(request):
             messages.error(request, 'Invalid username or password')
     return render(request, 'main/login.html')
 
+def admin_setup(request):
+    if not settings.DEBUG:
+        raise PermissionDenied
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        phone_number = request.POST.get('phone_number')
+        password = request.POST.get('password')
+        password_confirm = request.POST.get('password_confirm')
+
+        if password != password_confirm:
+            messages.error(request, 'Passwords do not match.')
+            return render(request, 'main/admin_setup.html')
+
+        if KasnebUser.objects.filter(username=username).exists():
+            messages.error(request, 'Username is already taken.')
+            return render(request, 'main/admin_setup.html')
+
+        if KasnebUser.objects.filter(email=email).exists():
+            messages.error(request, 'Email is already in use.')
+            return render(request, 'main/admin_setup.html')
+
+        KasnebUser.objects.create_superuser(
+            username=username,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            phone_number=phone_number,
+            password=password,
+        )
+        messages.success(request, 'Admin account created. You can now log in.')
+        return redirect('login')
+
+    return render(request, 'main/admin_setup.html')
+
+def role_required(*roles):
+    def decorator(view_func):
+        @wraps(view_func)
+        def _wrapped(request, *args, **kwargs):
+            user = request.user
+            if user.is_superuser or user.role in roles:
+                return view_func(request, *args, **kwargs)
+            raise PermissionDenied
+        return _wrapped
+    return decorator
+
 @login_required
+@role_required('security', 'ict_officer', 'admin')
 def dashboard_view(request):
     # Get today's statistics
     today = timezone.now().date()
@@ -58,6 +111,7 @@ def dashboard_view(request):
     return render(request, 'main/dashboard.html', context)
 
 @login_required
+@role_required('security', 'admin')
 def visitor_registration(request):
     if request.method == 'POST':
         try:
@@ -85,6 +139,7 @@ def visitor_registration(request):
     return render(request, 'main/visitor_registration.html')
 
 @login_required
+@role_required('security', 'admin')
 def vehicle_registration(request):
     if request.method == 'POST':
         try:
@@ -122,6 +177,7 @@ def vehicle_registration(request):
     return render(request, 'main/vehicle_registration.html', {'recent_visitors': recent_visitors})
 
 @login_required
+@role_required('security', 'admin')
 def visitor_checkout(request, visitor_id):
     visitor = get_object_or_404(Visitor, id=visitor_id)
     if visitor.status == 'checked_in':
@@ -134,6 +190,7 @@ def visitor_checkout(request, visitor_id):
     return redirect('dashboard')
 
 @login_required
+@role_required('security', 'admin')
 def vehicle_departure(request, vehicle_id):
     vehicle = get_object_or_404(Vehicle, id=vehicle_id)
     if vehicle.status == 'parked':
@@ -146,6 +203,7 @@ def vehicle_departure(request, vehicle_id):
     return redirect('dashboard')
 
 @login_required
+@role_required('security', 'ict_officer', 'admin')
 def visitor_list(request):
     visitors = Visitor.objects.all()
     
@@ -168,6 +226,7 @@ def visitor_list(request):
     return render(request, 'main/visitor_list.html', {'visitors': visitors})
 
 @login_required
+@role_required('security', 'ict_officer', 'admin')
 def vehicle_list(request):
     vehicles = Vehicle.objects.all()
     
